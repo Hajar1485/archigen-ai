@@ -19,9 +19,21 @@ REF = dict(Relative_Compactness=0.98, Surface_Area=514.5, Wall_Area=294, Roof_Ar
 client = TestClient(app)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def trained():
-    train()
+@pytest.fixture(scope="module", autouse=True)
+def trained(tmp_path_factory):
+    from api import main
+    from thermal import predict, train as training
+
+    output = tmp_path_factory.mktemp("thermal")
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(training, "MODEL_DIR", output)
+        patch.setattr(training, "MODEL_PATH", output / "thermal_models.joblib")
+        patch.setattr(training, "METRICS_PATH", output / "metrics.json")
+        patch.setattr(predict, "MODEL_PATH", training.MODEL_PATH)
+        patch.setattr(main, "METRICS_PATH", training.METRICS_PATH)
+        patch.setattr(predict, "_bundle", None)
+        train()
+        yield
 
 
 # ---------- données & modèle ----------

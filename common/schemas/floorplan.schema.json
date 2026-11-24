@@ -1,0 +1,506 @@
+{
+  "$defs": {
+    "ImportMetadata": {
+      "properties": {
+        "extraction_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction Confidence"
+        },
+        "image_height_px": {
+          "exclusiveMinimum": 0,
+          "title": "Image Height Px",
+          "type": "integer"
+        },
+        "image_width_px": {
+          "exclusiveMinimum": 0,
+          "title": "Image Width Px",
+          "type": "integer"
+        },
+        "meters_per_pixel": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meters Per Pixel"
+        },
+        "scale_provenance": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scale Provenance"
+        },
+        "scale_status": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "calibrated"
+          ],
+          "title": "Scale Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_width_px",
+        "image_height_px"
+      ],
+      "title": "ImportMetadata",
+      "type": "object"
+    },
+    "Opening": {
+      "properties": {
+        "connected_room_ids": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Connected Room Ids",
+          "type": "array"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "number"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "door",
+            "window",
+            "opening"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "offset": {
+          "description": "Début de la baie depuis (x1,y1), m",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "number"
+        },
+        "sill": {
+          "minimum": 0,
+          "title": "Sill",
+          "type": "number"
+        },
+        "wall_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Wall Id",
+          "type": "string"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "wall_id",
+        "offset",
+        "width"
+      ],
+      "title": "Opening",
+      "type": "object"
+    },
+    "Room": {
+      "properties": {
+        "h": {
+          "exclusiveMinimum": 0,
+          "title": "H",
+          "type": "number"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "other",
+          "title": "Type",
+          "type": "string"
+        },
+        "w": {
+          "exclusiveMinimum": 0,
+          "title": "W",
+          "type": "number"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "title": "Room",
+      "type": "object"
+    },
+    "Site": {
+      "properties": {
+        "depth": {
+          "description": "Profondeur du terrain (y), m",
+          "exclusiveMinimum": 0,
+          "title": "Depth",
+          "type": "number"
+        },
+        "width": {
+          "description": "Largeur du terrain (x), m",
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "depth"
+      ],
+      "title": "Site",
+      "type": "object"
+    },
+    "ThermalData": {
+      "properties": {
+        "glazing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ThermalProperty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "insulation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ThermalProperty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "predictions": {
+          "items": {
+            "$ref": "#/$defs/ThermalPrediction"
+          },
+          "title": "Predictions",
+          "type": "array"
+        },
+        "wall_material": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ThermalProperty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "ThermalData",
+      "type": "object"
+    },
+    "ThermalPrediction": {
+      "properties": {
+        "model_version": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Model Version",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target",
+          "type": "string"
+        },
+        "unit": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "target",
+        "value",
+        "unit",
+        "model_version"
+      ],
+      "title": "ThermalPrediction",
+      "type": "object"
+    },
+    "ThermalProperty": {
+      "properties": {
+        "provenance": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "known",
+            "assumed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "status",
+        "provenance"
+      ],
+      "title": "ThermalProperty",
+      "type": "object"
+    },
+    "Wall": {
+      "properties": {
+        "adjacent_room_ids": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Adjacent Room Ids",
+          "type": "array"
+        },
+        "exterior": {
+          "default": false,
+          "title": "Exterior",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "thickness": {
+          "default": 0.2,
+          "exclusiveMinimum": 0,
+          "title": "Thickness",
+          "type": "number"
+        },
+        "x1": {
+          "title": "X1",
+          "type": "number"
+        },
+        "x2": {
+          "title": "X2",
+          "type": "number"
+        },
+        "y1": {
+          "title": "Y1",
+          "type": "number"
+        },
+        "y2": {
+          "title": "Y2",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "x1",
+        "y1",
+        "x2",
+        "y2"
+      ],
+      "title": "Wall",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "import_metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ImportMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "north_angle_deg": {
+      "default": 0.0,
+      "title": "North Angle Deg",
+      "type": "number"
+    },
+    "openings": {
+      "items": {
+        "$ref": "#/$defs/Opening"
+      },
+      "title": "Openings",
+      "type": "array"
+    },
+    "orientation_status": {
+      "default": "assumed",
+      "enum": [
+        "assumed",
+        "known"
+      ],
+      "title": "Orientation Status",
+      "type": "string"
+    },
+    "plan_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "pattern": "\\S",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Id"
+    },
+    "rooms": {
+      "items": {
+        "$ref": "#/$defs/Room"
+      },
+      "minItems": 1,
+      "title": "Rooms",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "site": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Site"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source": {
+      "default": "manual",
+      "enum": [
+        "generated",
+        "imported",
+        "manual"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "thermal": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ThermalData"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "unit": {
+      "const": "m",
+      "default": "m",
+      "title": "Unit",
+      "type": "string"
+    },
+    "wall_height": {
+      "default": 2.7,
+      "exclusiveMinimum": 0,
+      "title": "Wall Height",
+      "type": "number"
+    },
+    "walls": {
+      "items": {
+        "$ref": "#/$defs/Wall"
+      },
+      "title": "Walls",
+      "type": "array"
+    }
+  },
+  "required": [
+    "rooms"
+  ],
+  "title": "Plan",
+  "type": "object"
+}

@@ -112,8 +112,8 @@ function readPlanField() {
 $("btn-example").onclick = (e) => guarded(e.target, async () => setPlan(await api("/api/plan/example")));
 $("btn-validate").onclick = (e) => guarded(e.target, async () => {
   const plan = readPlanField();
-  await postJSON("/api/plan/validate", plan);
-  setPlan(plan);
+  const result = await postJSON("/api/plan/validate?normalized=true", plan);
+  setPlan(result.plan);
 });
 $("btn-generate").onclick = (e) => guarded(e.target, async () => {
   const r = await postJSON("/api/plan/generate", { text: $("nl-text").value });

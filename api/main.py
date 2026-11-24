@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 
+from common.geometry_validation import validate_geometry
 from common.schema import Plan
 from thermal import predict as thermal
 from thermal.data import FEATURES
@@ -92,6 +93,9 @@ def thermal_predict(f: ThermalFeatures):
 @app.post("/api/thermal/predict-plan")
 def thermal_predict_plan(plan: Plan):
     """Prédiction depuis le JSON commun : les 8 variables sont calculées depuis le plan."""
+    report = validate_geometry(plan)
+    if report.errors:
+        return geometry_error(report.errors)
     feats, details = features_from_plan(plan)
     res = thermal.predict(feats)
     res["computed_from_plan"] = details
@@ -117,11 +121,44 @@ def plan_example():
     return json.loads(EXAMPLE_PLAN.read_text(encoding="utf-8"))
 
 
+def geometry_error(messages: list[str], *, module_output: bool = False):
+    return error(502 if module_output else 422,
+                 "invalid_module_output" if module_output else "invalid_geometry",
+                 "Géométrie du plan incohérente.",
+                 details=[{"message": message} for message in messages])
+
+
 @app.post("/api/plan/validate")
-def plan_validate(plan: Plan):
-    """Valide un plan au format JSON commun (utile pour vérifier la sortie des autres modules)."""
-    return {"valid": True, "rooms": len(plan.rooms), "walls": len(plan.walls),
-            "openings": len(plan.openings)}
+def plan_validate(plan: Plan, completed: bool = False, normalized: bool = False):
+    """Vérifie la géométrie. Le profil terminé vérifie aussi les faces et les accès."""
+    report = validate_geometry(plan, completed=completed)
+    if report.errors:
+        return geometry_error(report.errors)
+    result = {"valid": True, "rooms": len(plan.rooms), "walls": len(plan.walls),
+              "openings": len(plan.openings)}
+    if completed or report.warnings:
+        result["warnings"] = report.warnings
+    if normalized:
+        result["plan"] = plan.model_dump(mode="json")
+    return result
+
+
+def module_result(fn, source: str, *args):
+    started = time.perf_counter()
+    try:
+        payload = fn(*args)
+        if not isinstance(payload, dict):
+            return error(502, "invalid_module_output", "Le module doit renvoyer un dictionnaire de plan.")
+        if payload.get("source", source) != source:
+            return error(502, "invalid_module_output", f"La sortie du module exige source={source}.")
+        plan = Plan.model_validate({**payload, "source": source})
+    except ValidationError as exc:
+        return error(502, "invalid_module_output", "Le module a renvoyé un plan non conforme.",
+                     details=exc.errors(include_input=False, include_context=False))
+    report = validate_geometry(plan)
+    if report.errors:
+        return geometry_error(report.errors, module_output=True)
+    return {"plan": plan.model_dump(mode="json"), "seconds": round(time.perf_counter() - started, 3)}
 
 
 class GenerateRequest(BaseModel):
@@ -132,17 +169,11 @@ class GenerateRequest(BaseModel):
 def plan_generate(req: GenerateRequest):
     """Texte -> plan 2D (module Personne 1)."""
     fn = modules.load("planner")
-    t0 = time.perf_counter()
-    try:
-        plan = Plan.model_validate(fn(req.text))
-    except ValidationError as e:
-        return error(502, "invalid_module_output", "Le module de génération a renvoyé un JSON non conforme.",
-                     details=json.loads(e.json()))
-    return {"plan": plan.model_dump(), "seconds": round(time.perf_counter() - t0, 3)}
+    return module_result(fn, "generated", req.text)
 
 
 @app.post("/api/plan/import")
-async def plan_import(image: UploadFile = File(...), known_dimension_m: float | None = Form(None)):
+async def plan_import(image: UploadFile = File(...), known_dimension_m: float | None = Form(None, gt=0, allow_inf_nan=False)):
     """Image de plan -> JSON commun (module Personne 2)."""
     if image.content_type not in {"image/png", "image/jpeg"}:
         raise HTTPException(415, "Format non supporté : PNG ou JPEG attendu.")
@@ -150,13 +181,7 @@ async def plan_import(image: UploadFile = File(...), known_dimension_m: float | 
     if not data or len(data) > MAX_IMAGE_BYTES:
         raise HTTPException(413, "Image vide ou supérieure à 15 Mo.")
     fn = modules.load("plan_import")
-    t0 = time.perf_counter()
-    try:
-        plan = Plan.model_validate(fn(data, known_dimension_m))
-    except ValidationError as e:
-        return error(502, "invalid_module_output", "Le module d'import a renvoyé un JSON non conforme.",
-                     details=json.loads(e.json()))
-    return {"plan": plan.model_dump(), "seconds": round(time.perf_counter() - t0, 3)}
+    return module_result(fn, "imported", data, known_dimension_m)
 
 
 # Doit rester en dernier pour ne pas masquer /api.
