@@ -1,0 +1,14 @@
+# Premier visualiseur Three.js
+
+**Responsable · Personne 2.** Le visualiseur consommera un `Plan` métrique terminé et produira une scène interactive. Dépendances proposées pour ce module futur : Three.js, `OrbitControls` et un petit serveur de développement. L’export IFC via IfcOpenShell constitue une extension ultérieure.
+
+## Brancher la vue sur l’application existante
+
+1. Depuis la racine, démarrer `python -m uvicorn api.main:app` et ouvrir `http://127.0.0.1:8000/`. Coller `data/examples/simple_floorplan.json` dans le champ JSON puis cliquer sur **Valider / afficher**. Le bouton **Charger l’exemple** reste associé au plan thermique historique. Le futur module JS chargé par `frontend/index.html` écoutera `document.addEventListener("plan-changed", event => ...)`. À chaque événement, utiliser `event.detail`, libérer les ressources de l’ancienne scène et rendre visible le conteneur `#view3d` en retirant `hidden`. Le premier rendu peut être développé indépendamment du solveur et de l’importeur.
+2. Créer une scène avec Y vertical et une unité par mètre. Pour chaque pièce, placer une dalle de dimensions horizontales `w × h` au centre `(x + w/2, 0, −(y + h/2))`. Si la dalle a une épaisseur, descendre son centre de sa demi-épaisseur pour conserver le sol fini à la cote zéro.
+3. Pour chaque mur, calculer `dx = x2 − x1`, `dy = y2 − y1` et `L = hypot(dx, dy)`. Grouper les baies par `wall_id` et travailler dans les coordonnées locales du mur : distance `s` de 0 à `L` et altitude `z` de 0 à `wall_height`.
+4. Découper le mur aux bornes `0`, `L`, `offset` et `offset + width` de toutes ses baies. Pour chaque bande longitudinale, retirer les intervalles verticaux `[sill, sill + height]` des baies actives. Créer un pavé pour chaque intervalle de matière restant. Ce procédé laisse un vide réel pour une porte et conserve l’allège et le linteau des fenêtres.
+5. Pour une bande `[a, b]` et une hauteur `[bas, haut]`, créer `BoxGeometry(b − a, haut − bas, thickness)`. Avec `s = (a + b)/2`, positionner le centre en `(x1 + s × dx/L, (bas + haut)/2, −(y1 + s × dy/L))`. Appliquer `rotation.y = atan2(dy, dx)`. Le même calcul fonctionne pour le mur nord dont le sens est inversé.
+6. Ajouter caméra, lumière et commandes orbitales. Cibler le centre du bâtiment `(5, 0, −3)`. Conserver les identifiants de pièce, de mur et de baie pour les interactions futures.
+
+**Contrôle visuel du premier jalon.** Les deux sols utiles mesurent chacun 3,84 × 3,80 m. La cloison d’axe X = 5 m mesure 0,12 m d’épaisseur. Les quatre façades ont 0,20 m d’épaisseur et tous les murs culminent à 2,70 m. L’entrée sud débouche dans le séjour. Une porte traverse la cloison vers la chambre. Les deux fenêtres nord commencent à 0,90 m du sol : celle de la chambre s’étend de X = 8 à 6,5 m et celle du séjour de X = 4 à 2,5 m. Comparer une vue de dessus et une vue oblique. [JSON à charger](../data/examples/simple_floorplan.json) · [Conventions communes](data_contract.md)

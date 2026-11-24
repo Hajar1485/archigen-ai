@@ -1,0 +1,226 @@
+{
+  "$defs": {
+    "Relationship": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "adjacent",
+            "open_space"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "room_ids": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            }
+          ],
+          "title": "Room Ids",
+          "type": "array"
+        },
+        "strength": {
+          "default": "mandatory",
+          "enum": [
+            "mandatory",
+            "preferred"
+          ],
+          "title": "Strength",
+          "type": "string"
+        }
+      },
+      "required": [
+        "room_ids",
+        "kind"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "RoomRequirement": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "max_area": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Area"
+        },
+        "min_area": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Area"
+        },
+        "min_depth": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Depth"
+        },
+        "min_width": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Width"
+        },
+        "orientation_preference": {
+          "anyOf": [
+            {
+              "enum": [
+                "N",
+                "NE",
+                "E",
+                "SE",
+                "S",
+                "SW",
+                "W",
+                "NW"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orientation Preference"
+        },
+        "target_area": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Area"
+        },
+        "type": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "RoomRequirement",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "building_type": {
+      "const": "single_storey_house",
+      "default": "single_storey_house",
+      "title": "Building Type",
+      "type": "string"
+    },
+    "max_building_depth": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Building Depth"
+    },
+    "max_building_width": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Building Width"
+    },
+    "relationships": {
+      "items": {
+        "$ref": "#/$defs/Relationship"
+      },
+      "title": "Relationships",
+      "type": "array"
+    },
+    "rooms": {
+      "items": {
+        "$ref": "#/$defs/RoomRequirement"
+      },
+      "minItems": 1,
+      "title": "Rooms",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "target_total_area": {
+      "description": "Cible de surface brute de plancher, m²",
+      "exclusiveMinimum": 0,
+      "title": "Target Total Area",
+      "type": "number"
+    }
+  },
+  "required": [
+    "target_total_area",
+    "rooms"
+  ],
+  "title": "Requirements",
+  "type": "object"
+}

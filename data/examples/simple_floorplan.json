@@ -1,0 +1,149 @@
+{
+  "schema_version": "1.0.0",
+  "source": "manual",
+  "unit": "m",
+  "north_angle_deg": 0,
+  "orientation_status": "assumed",
+  "wall_height": 2.7,
+  "plan_id": "simple",
+  "site": {
+    "width": 10,
+    "depth": 6
+  },
+  "rooms": [
+    {
+      "id": "living",
+      "name": "Séjour",
+      "type": "living",
+      "x": 1.1,
+      "y": 1.1,
+      "w": 3.84,
+      "h": 3.8
+    },
+    {
+      "id": "bed",
+      "name": "Chambre",
+      "type": "bedroom",
+      "x": 5.06,
+      "y": 1.1,
+      "w": 3.84,
+      "h": 3.8
+    }
+  ],
+  "walls": [
+    {
+      "id": "south",
+      "x1": 1,
+      "y1": 1,
+      "x2": 9,
+      "y2": 1,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "living",
+        "bed"
+      ]
+    },
+    {
+      "id": "east",
+      "x1": 9,
+      "y1": 1,
+      "x2": 9,
+      "y2": 5,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "bed"
+      ]
+    },
+    {
+      "id": "north",
+      "x1": 9,
+      "y1": 5,
+      "x2": 1,
+      "y2": 5,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "bed",
+        "living"
+      ]
+    },
+    {
+      "id": "west",
+      "x1": 1,
+      "y1": 5,
+      "x2": 1,
+      "y2": 1,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "living"
+      ]
+    },
+    {
+      "id": "partition",
+      "x1": 5,
+      "y1": 1,
+      "x2": 5,
+      "y2": 5,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "living",
+        "bed"
+      ]
+    }
+  ],
+  "openings": [
+    {
+      "id": "entrance",
+      "kind": "door",
+      "wall_id": "south",
+      "offset": 0.8,
+      "width": 0.9,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "living"
+      ]
+    },
+    {
+      "id": "interior",
+      "kind": "door",
+      "wall_id": "partition",
+      "offset": 1.4,
+      "width": 0.85,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "living",
+        "bed"
+      ]
+    },
+    {
+      "id": "bed-window",
+      "kind": "window",
+      "wall_id": "north",
+      "offset": 1,
+      "width": 1.5,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "bed"
+      ]
+    },
+    {
+      "id": "living-window",
+      "kind": "window",
+      "wall_id": "north",
+      "offset": 5,
+      "width": 1.5,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "living"
+      ]
+    }
+  ]
+}

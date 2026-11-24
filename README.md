@@ -3,9 +3,12 @@
 Assistant de conception préliminaire de maisons individuelles de plain-pied (projet transversal, Master IA & Objets Connectés, Université Ibn Tofaïl). Approche hybride LLM + recherche opérationnelle : le texte est traduit en contraintes géométriques, résolues par un solveur ; les plans (générés ou importés) alimentent une vue 3D et une estimation thermique.
 
 ```
-Texte ─► NLP ─► contraintes ─► Solveur 2D ─┐
-                                           ├─► JSON commun ─► 3D (Three.js) + Thermique (UCI) ─► Application web
-Image de plan ─► Segmentation (CubiCasa5K) ┘
+Texte → NLP → Requirements → solveur 2D ──────────────────────────────────┐
+Image → segmentation → vectorisation → topologie → calibration métrique ──┤
+                                                                          ↓
+                                                               Plan JSON commun
+                                                                          ↓
+                                                      FastAPI → 2D, 3D et thermique
 ```
 
 ## Répartition du travail
@@ -29,17 +32,40 @@ models/            modèles entraînés et métriques
 tests/             tests d'intégration et du module thermique
 ```
 
-## Lancer
-```bash
-python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
-.venv/Scripts/python -m thermal.train                 # entraîne et écrit models/ (auto au 1er appel sinon)
-.venv/Scripts/python -m uvicorn api.main:app --reload # http://localhost:8000  (doc API : /docs)
-.venv/Scripts/python -m pytest                        # ~45 s
-```
-Lancer toujours depuis la racine du dépôt (les modules `planner` et `plan_import` y sont importés).
+## Installation et validation
 
-## JSON commun
-Défini dans `common/schema.py`. Mètres, origine au coin sud-ouest, x vers l'est, y vers le nord ; `north_angle_deg` = azimut réel de l'axe +y du plan ; pièces = rectangles alignés ; murs, ouvertures (porte, fenêtre) référencent un mur. Exemple : `data/example_plan.json`. **Tout changement du schéma doit être annoncé à l'équipe** : il impacte solveur, import, 3D, thermique et interface.
+Utiliser Python 3.12 depuis la racine. Les modèles thermiques sont déjà livrés. L’environnement de développement ajoute le validateur des exports JSON Schema.
+
+**Windows PowerShell**
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m common.export_schemas --check
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m uvicorn api.main:app --reload
+```
+
+**Linux**
+
+```sh
+python3.12 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python -m common.export_schemas --check
+python -m pytest -q
+python -m uvicorn api.main:app --reload
+```
+
+Ouvrir `http://127.0.0.1:8000/` pour l’interface et `/docs` pour l’API. L’installation applicative seule utilise `requirements.txt`. Pour une expérimentation explicite, `python -m thermal.train` réécrit les artefacts locaux dans `models/`. La suite pytest entraîne dans un répertoire temporaire.
+
+## Contrat V1 proposé
+
+Les trois membres doivent examiner la V1 avant de démarrer leurs branches de développement. `common/schema.py` définit le plan métrique, `common/requirements_schema.py` le programme avant placement. Le NLP transmet son programme au solveur 2D. L’importeur segmente, vectorise et calibre une image avant de produire le même plan. Les deux parcours alimentent le frontend, la 3D et les calculs thermiques par FastAPI.
+
+`common/geometry_validation.py` vérifie le plan après lecture Pydantic. `python -m common.export_schemas` écrit les deux exports Draft 2020-12 dans `common/schemas/`. Les trois nouveaux exemples se trouvent dans `data/examples/`. Le bouton de démonstration charge toujours `data/example_plan.json`.
+
+[Dictionnaire des champs et repères](docs/data_contract.md) · [Architecture, compatibilité et jalons](docs/integration.md) · [Données](data/README.md) · [Premier visualiseur Three.js](docs/threejs.md) · [Branches et revue](CONTRIBUTING.md)
 
 ## Brancher un module
 - **Personne 1** : `planner/__init__.py` (ou module) exposant `generate_plan(text: str) -> dict`.

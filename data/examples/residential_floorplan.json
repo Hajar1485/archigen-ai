@@ -1,0 +1,346 @@
+{
+  "schema_version": "1.0.0",
+  "source": "manual",
+  "unit": "m",
+  "north_angle_deg": 15,
+  "orientation_status": "assumed",
+  "wall_height": 2.7,
+  "plan_id": "residential",
+  "site": {
+    "width": 15,
+    "depth": 11
+  },
+  "rooms": [
+    {
+      "id": "living",
+      "name": "Séjour",
+      "type": "living",
+      "x": 1.1,
+      "y": 1.1,
+      "w": 6.74,
+      "h": 3.34
+    },
+    {
+      "id": "kitchen",
+      "name": "Cuisine",
+      "type": "kitchen",
+      "x": 7.96,
+      "y": 1.1,
+      "w": 4.74,
+      "h": 3.34
+    },
+    {
+      "id": "hall",
+      "name": "Couloir",
+      "type": "corridor",
+      "x": 1.1,
+      "y": 4.56,
+      "w": 11.6,
+      "h": 1.28
+    },
+    {
+      "id": "bed1",
+      "name": "Chambre 1",
+      "type": "bedroom",
+      "x": 1.1,
+      "y": 5.96,
+      "w": 4.24,
+      "h": 3.14
+    },
+    {
+      "id": "bed2",
+      "name": "Chambre 2",
+      "type": "bedroom",
+      "x": 5.46,
+      "y": 5.96,
+      "w": 4.28,
+      "h": 3.14
+    },
+    {
+      "id": "bath",
+      "name": "Salle de bain",
+      "type": "bathroom",
+      "x": 9.86,
+      "y": 5.96,
+      "w": 2.84,
+      "h": 3.14
+    }
+  ],
+  "walls": [
+    {
+      "id": "south",
+      "x1": 1,
+      "y1": 1,
+      "x2": 12.8,
+      "y2": 1,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "living",
+        "kitchen"
+      ]
+    },
+    {
+      "id": "east",
+      "x1": 12.8,
+      "y1": 1,
+      "x2": 12.8,
+      "y2": 9.2,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "kitchen",
+        "hall",
+        "bath"
+      ]
+    },
+    {
+      "id": "north",
+      "x1": 12.8,
+      "y1": 9.2,
+      "x2": 1,
+      "y2": 9.2,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "bath",
+        "bed2",
+        "bed1"
+      ]
+    },
+    {
+      "id": "west",
+      "x1": 1,
+      "y1": 1,
+      "x2": 1,
+      "y2": 9.2,
+      "thickness": 0.2,
+      "exterior": true,
+      "adjacent_room_ids": [
+        "living",
+        "hall",
+        "bed1"
+      ]
+    },
+    {
+      "id": "hall-south",
+      "x1": 1,
+      "y1": 4.5,
+      "x2": 12.8,
+      "y2": 4.5,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "hall",
+        "living",
+        "kitchen"
+      ]
+    },
+    {
+      "id": "hall-north",
+      "x1": 1,
+      "y1": 5.9,
+      "x2": 12.8,
+      "y2": 5.9,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "hall",
+        "bed1",
+        "bed2",
+        "bath"
+      ]
+    },
+    {
+      "id": "living-kitchen",
+      "x1": 7.9,
+      "y1": 1,
+      "x2": 7.9,
+      "y2": 4.5,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "living",
+        "kitchen"
+      ]
+    },
+    {
+      "id": "bedrooms",
+      "x1": 5.4,
+      "y1": 5.9,
+      "x2": 5.4,
+      "y2": 9.2,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "bed1",
+        "bed2"
+      ]
+    },
+    {
+      "id": "bath-partition",
+      "x1": 9.8,
+      "y1": 5.9,
+      "x2": 9.8,
+      "y2": 9.2,
+      "thickness": 0.12,
+      "exterior": false,
+      "adjacent_room_ids": [
+        "bed2",
+        "bath"
+      ]
+    }
+  ],
+  "openings": [
+    {
+      "id": "entrance",
+      "kind": "door",
+      "wall_id": "west",
+      "offset": 3.65,
+      "width": 0.95,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall"
+      ]
+    },
+    {
+      "id": "living-door",
+      "kind": "door",
+      "wall_id": "hall-south",
+      "offset": 1.3,
+      "width": 0.9,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall",
+        "living"
+      ]
+    },
+    {
+      "id": "kitchen-door",
+      "kind": "door",
+      "wall_id": "hall-south",
+      "offset": 8.4,
+      "width": 0.85,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall",
+        "kitchen"
+      ]
+    },
+    {
+      "id": "bed1-door",
+      "kind": "door",
+      "wall_id": "hall-north",
+      "offset": 1.5,
+      "width": 0.85,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall",
+        "bed1"
+      ]
+    },
+    {
+      "id": "bed2-door",
+      "kind": "door",
+      "wall_id": "hall-north",
+      "offset": 5.3,
+      "width": 0.85,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall",
+        "bed2"
+      ]
+    },
+    {
+      "id": "bath-door",
+      "kind": "door",
+      "wall_id": "hall-north",
+      "offset": 10,
+      "width": 0.8,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "hall",
+        "bath"
+      ]
+    },
+    {
+      "id": "passage",
+      "kind": "opening",
+      "wall_id": "living-kitchen",
+      "offset": 1.1,
+      "width": 1.3,
+      "height": 2.1,
+      "sill": 0,
+      "connected_room_ids": [
+        "living",
+        "kitchen"
+      ]
+    },
+    {
+      "id": "living-window",
+      "kind": "window",
+      "wall_id": "south",
+      "offset": 2.4,
+      "width": 2,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "living"
+      ]
+    },
+    {
+      "id": "kitchen-window",
+      "kind": "window",
+      "wall_id": "south",
+      "offset": 8.1,
+      "width": 1.4,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "kitchen"
+      ]
+    },
+    {
+      "id": "bed1-window",
+      "kind": "window",
+      "wall_id": "north",
+      "offset": 8.2,
+      "width": 1.5,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "bed1"
+      ]
+    },
+    {
+      "id": "bed2-window",
+      "kind": "window",
+      "wall_id": "north",
+      "offset": 4,
+      "width": 1.5,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "bed2"
+      ]
+    },
+    {
+      "id": "bath-window",
+      "kind": "window",
+      "wall_id": "east",
+      "offset": 6,
+      "width": 0.65,
+      "height": 1.2,
+      "sill": 0.9,
+      "connected_room_ids": [
+        "bath"
+      ]
+    }
+  ]
+}
