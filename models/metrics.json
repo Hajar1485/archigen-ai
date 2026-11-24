@@ -71,8 +71,8 @@
             "r2": 0.8080564163698705
           },
           "test_random_split": {
-            "mae": 0.3342015624999973,
-            "rmse": 0.46222420826855143,
+            "mae": 0.3342015624999974,
+            "rmse": 0.46222420826855154,
             "r2": 0.997967354853668
           }
         },
@@ -128,13 +128,13 @@
         "random_forest": {
           "cv_by_shape": {
             "mae": 4.955707074652775,
-            "rmse": 6.208459509283277,
+            "rmse": 6.208459509283276,
             "r2": 0.5735474951761634
           },
           "test_unseen_shapes": {
             "mae": 4.3060388888888665,
-            "rmse": 4.702058589698815,
-            "r2": 0.7054304723063975
+            "rmse": 4.702058589698816,
+            "r2": 0.7054304723063974
           },
           "test_random_split": {
             "mae": 1.0010116319444442,
@@ -178,6 +178,6 @@
     "test_rows": 192,
     "test_shapes": 3
   },
-  "train_seconds": 18.62,
+  "train_seconds": 23.83,
   "note": "Données simulées (12 formes de bâtiments) : prédictions indicatives, non certifiées. Hors du domaine du dataset, l'incertitude est forte."
 }
