@@ -1,0 +1,183 @@
+{
+  "dataset": {
+    "rows_in": 768,
+    "duplicates": 0,
+    "missing_values": 0,
+    "rows_out": 768
+  },
+  "domain": {
+    "Relative_Compactness": {
+      "min": 0.62,
+      "max": 0.98
+    },
+    "Surface_Area": {
+      "min": 514.5,
+      "max": 808.5
+    },
+    "Wall_Area": {
+      "min": 245.0,
+      "max": 416.5
+    },
+    "Roof_Area": {
+      "min": 110.25,
+      "max": 220.5
+    },
+    "Overall_Height": {
+      "min": 3.5,
+      "max": 7.0
+    },
+    "Orientation": {
+      "min": 2.0,
+      "max": 5.0
+    },
+    "Glazing_Area": {
+      "min": 0.0,
+      "max": 0.4
+    },
+    "Glazing_Area_Distribution": {
+      "min": 0.0,
+      "max": 5.0
+    }
+  },
+  "targets": {
+    "Heating_Load": {
+      "candidates": {
+        "ridge": {
+          "cv_by_shape": {
+            "mae": 3.547332414133064,
+            "rmse": 4.814112764456848,
+            "r2": 0.7720712062861546
+          },
+          "test_unseen_shapes": {
+            "mae": 2.0660768599005808,
+            "rmse": 2.4547519702246063,
+            "r2": 0.9108262356840527
+          },
+          "test_random_split": {
+            "mae": 2.1786438973641613,
+            "rmse": 2.99956357029037,
+            "r2": 0.9144002820380385
+          }
+        },
+        "random_forest": {
+          "cv_by_shape": {
+            "mae": 4.301941102430551,
+            "rmse": 6.1082048316454705,
+            "r2": 0.6330610121016118
+          },
+          "test_unseen_shapes": {
+            "mae": 3.315933159722223,
+            "rmse": 3.601437370385155,
+            "r2": 0.8080564163698705
+          },
+          "test_random_split": {
+            "mae": 0.3342015624999973,
+            "rmse": 0.46222420826855143,
+            "r2": 0.997967354853668
+          }
+        },
+        "gradient_boosting": {
+          "cv_by_shape": {
+            "mae": 3.9979920379454197,
+            "rmse": 5.383286999149706,
+            "r2": 0.714988921007648
+          },
+          "test_unseen_shapes": {
+            "mae": 3.347950479609448,
+            "rmse": 3.642014136032457,
+            "r2": 0.8037068611469929
+          },
+          "test_random_split": {
+            "mae": 0.3307095228419826,
+            "rmse": 0.43942138264743513,
+            "r2": 0.998162960200633
+          }
+        }
+      },
+      "selected": "gradient_boosting",
+      "feature_importances": {
+        "Relative_Compactness": 0.2546335053534207,
+        "Surface_Area": 0.15630562508788923,
+        "Wall_Area": 0.014202233492330647,
+        "Roof_Area": 0.22951862527227482,
+        "Overall_Height": 0.25635887964729226,
+        "Orientation": 0.0002001167155378483,
+        "Glazing_Area": 0.07687508608357073,
+        "Glazing_Area_Distribution": 0.011905928347683736
+      }
+    },
+    "Cooling_Load": {
+      "candidates": {
+        "ridge": {
+          "cv_by_shape": {
+            "mae": 3.887169545338422,
+            "rmse": 5.088963963700913,
+            "r2": 0.7134755321636317
+          },
+          "test_unseen_shapes": {
+            "mae": 3.5070359939802564,
+            "rmse": 4.009532145939719,
+            "r2": 0.7858100224943683
+          },
+          "test_random_split": {
+            "mae": 2.2369854181347546,
+            "rmse": 3.169232262175962,
+            "r2": 0.8924220084478822
+          }
+        },
+        "random_forest": {
+          "cv_by_shape": {
+            "mae": 4.955707074652775,
+            "rmse": 6.208459509283277,
+            "r2": 0.5735474951761634
+          },
+          "test_unseen_shapes": {
+            "mae": 4.3060388888888665,
+            "rmse": 4.702058589698815,
+            "r2": 0.7054304723063975
+          },
+          "test_random_split": {
+            "mae": 1.0010116319444442,
+            "rmse": 1.6569643020574747,
+            "r2": 0.9705936176835893
+          }
+        },
+        "gradient_boosting": {
+          "cv_by_shape": {
+            "mae": 4.8363227989039475,
+            "rmse": 6.133652837322773,
+            "r2": 0.5837623639762872
+          },
+          "test_unseen_shapes": {
+            "mae": 4.261739374513989,
+            "rmse": 4.607398648209444,
+            "r2": 0.7171713979826411
+          },
+          "test_random_split": {
+            "mae": 0.9099603998420368,
+            "rmse": 1.3564442298579655,
+            "r2": 0.9802930606417276
+          }
+        }
+      },
+      "selected": "gradient_boosting",
+      "feature_importances": {
+        "Relative_Compactness": 0.3008054017476063,
+        "Surface_Area": 0.26263825644667443,
+        "Wall_Area": 0.03402456214093508,
+        "Roof_Area": 0.17034077678398535,
+        "Overall_Height": 0.17509216312682907,
+        "Orientation": 0.005180263483412864,
+        "Glazing_Area": 0.0439486932660602,
+        "Glazing_Area_Distribution": 0.0079698830044968
+      }
+    }
+  },
+  "split": {
+    "train_rows": 576,
+    "test_rows": 192,
+    "test_shapes": 3
+  },
+  "train_seconds": 18.62,
+  "note": "Données simulées (12 formes de bâtiments) : prédictions indicatives, non certifiées. Hors du domaine du dataset, l'incertitude est forte."
+}

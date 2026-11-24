@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArchiGen AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>ArchiGen AI</h1>
+  <span class="sub">Conception préliminaire de maisons de plain-pied</span>
+  <div id="status" class="status" title="État des modules"></div>
+</header>
+
+<nav id="tabs">
+  <button data-tab="design" class="active">1. Plan</button>
+  <button data-tab="thermal">2. Thermique</button>
+  <button data-tab="manual">Thermique (saisie)</button>
+  <button data-tab="quality">Qualité du modèle</button>
+</nav>
+
+<div id="error" class="error" hidden role="alert"></div>
+
+<main>
+  <section id="tab-design" class="tab">
+    <div class="cols">
+      <div class="panel">
+        <h2>Source du plan</h2>
+        <label>Description en langage naturel <small>(module Personne 1)</small></label>
+        <textarea id="nl-text" rows="4" placeholder="Maison de 3 chambres, séjour ouvert sur la cuisine, terrain 20 x 15 m…"></textarea>
+        <button id="btn-generate">Générer le plan</button>
+
+        <label>Ou importer une image de plan <small>(module Personne 2)</small></label>
+        <input type="file" id="img-file" accept="image/png,image/jpeg">
+        <input type="number" id="img-dim" step="0.01" min="0" placeholder="Une dimension connue (m) pour l'échelle">
+        <button id="btn-import">Importer l'image</button>
+
+        <label>Ou coller / charger un plan JSON commun</label>
+        <textarea id="plan-json" rows="8" spellcheck="false"></textarea>
+        <div class="row">
+          <button id="btn-example" class="secondary">Charger l'exemple</button>
+          <button id="btn-validate" class="secondary">Valider / afficher</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Aperçu 2D</h2>
+        <div id="plan-view" class="plan-view"><p class="muted">Aucun plan chargé.</p></div>
+        <div id="plan-info" class="muted"></div>
+        <div id="view3d" class="view3d" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-thermal" class="tab" hidden>
+    <div class="panel">
+      <h2>Estimation thermique du plan courant</h2>
+      <p class="muted">Les 8 variables UCI sont calculées depuis le plan. Estimation indicative (données simulées).</p>
+      <button id="btn-thermal-plan">Estimer chauffage et refroidissement</button>
+      <div id="thermal-result"></div>
+    </div>
+  </section>
+
+  <section id="tab-manual" class="tab" hidden>
+    <div class="panel">
+      <h2>Saisie des 8 variables UCI</h2>
+      <form id="manual-form" class="grid"></form>
+      <button id="btn-manual">Prédire</button>
+      <div id="manual-result"></div>
+    </div>
+  </section>
+
+  <section id="tab-quality" class="tab" hidden>
+    <div class="panel">
+      <h2>Performances du modèle thermique</h2>
+      <p class="muted">Erreurs mesurées séparément pour le chauffage et le refroidissement.</p>
+      <div id="metrics"></div>
+    </div>
+  </section>
+</main>
+
+<footer>Prototype académique — estimation indicative, non certifiée, sans vérification réglementaire.</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
