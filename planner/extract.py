@@ -1,12 +1,17 @@
-"""Texte en langage naturel -> Requirements (programme avant placement)."""
+"""Texte en langage naturel -> Requirements, via un LLM local (Ollama)."""
 from __future__ import annotations
 
 import json
 import os
+import urllib.error
+import urllib.request
 
 from pydantic import ValidationError
 
 from common.requirements_schema import Requirements
+
+OLLAMA_URL = os.getenv("ARCHIGEN_OLLAMA_URL", "http://localhost:11434")
+MODEL = os.getenv("ARCHIGEN_LLM_MODEL", "qwen2.5:7b")
 
 SYSTEM = """Tu extrais le programme d'une maison de plain-pied en JSON strict.
 Champs: target_total_area (m2, obligatoire),
@@ -19,11 +24,29 @@ Types: living, kitchen, corridor, bedroom, bathroom.
 Ids uniques (living, kitchen, hall, bed1, bed2, bath).
 Regle: min_area <= target_area <= max_area. Si une valeur manque, omets le champ.
 Si un couloir distribue les pieces, ajoute une relation adjacent hall<->piece.
-Reponds uniquement par le JSON, sans texte ni balises."""
+Reponds uniquement par le JSON."""
 
 
 class ExtractionError(RuntimeError):
     pass
+
+
+def _chat(messages: list[dict]) -> str:
+    body = json.dumps({
+        "model": MODEL,
+        "messages": [{"role": "system", "content": SYSTEM}, *messages],
+        "format": "json",
+        "stream": False,
+        "options": {"temperature": 0, "num_ctx": 4096, "num_predict": 1200},
+    }).encode()
+    req = urllib.request.Request(f"{OLLAMA_URL}/api/chat", data=body,
+                                 headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            return json.loads(resp.read())["message"]["content"]
+    except (urllib.error.URLError, TimeoutError, KeyError) as e:
+        raise ExtractionError(
+            f"Ollama indisponible ({OLLAMA_URL}, modèle {MODEL}) : {e}") from e
 
 
 def _clean(raw: str) -> str:
@@ -35,21 +58,10 @@ def _clean(raw: str) -> str:
 
 
 def extract_requirements(text: str, retries: int = 1) -> Requirements:
-    try:
-        import anthropic
-    except ImportError as e:
-        raise ExtractionError("Package 'anthropic' non installé.") from e
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        raise ExtractionError("ANTHROPIC_API_KEY manquante.")
-
-    client = anthropic.Anthropic()
-    model = os.getenv("ARCHIGEN_LLM_MODEL", "claude-sonnet-4-6")
     messages = [{"role": "user", "content": text}]
     last_error = ""
     for _ in range(retries + 1):
-        msg = client.messages.create(model=model, max_tokens=1500,
-                                     system=SYSTEM, messages=messages)
-        raw = msg.content[0].text
+        raw = _chat(messages)
         try:
             return Requirements.model_validate(json.loads(_clean(raw)))
         except (json.JSONDecodeError, ValidationError) as e:

@@ -17,7 +17,7 @@ def test_example_requirements_valid():
     Requirements.model_validate(json.loads(EXAMPLE.read_text(encoding="utf-8")))
 
 
-def test_missing_key(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+def test_ollama_down_raises(monkeypatch):
+    monkeypatch.setattr(extract, "OLLAMA_URL", "http://127.0.0.1:1")
     with pytest.raises(extract.ExtractionError):
         extract.extract_requirements("maison de 3 chambres")
