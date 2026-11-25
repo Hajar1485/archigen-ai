@@ -1,5 +1,8 @@
 // Interface ArchiGen AI : parcours plan -> thermique. Aucune donnée n'est injectée via innerHTML.
+import { connectViewer } from "./viewer/controller.js";
 const $ = (id) => document.getElementById(id);
+const releaseViewer = connectViewer($("view3d"));
+window.addEventListener("pagehide", e => { if (!e.persisted) releaseViewer(); });
 const SVGNS = "http://www.w3.org/2000/svg";
 let currentPlan = null;
 
@@ -64,6 +67,7 @@ async function loadStatus() {
 
 // ---------- plan : chargement et rendu 2D ----------
 function setPlan(plan) {
+  $("viewer-example").value = "";
   currentPlan = plan;
   $("plan-json").value = JSON.stringify(plan, null, 2);
   renderPlan(plan);
@@ -207,3 +211,19 @@ async function loadMetrics() {
 
 buildManualForm();
 loadStatus();
+
+const references = { simple: "/assets/examples/simple_floorplan.json",
+  residential: "/assets/examples/residential_floorplan.json", historical: "/api/plan/example" };
+let selection = 0;
+async function selectReference(key) {
+  const request = ++selection;
+  if (!Object.hasOwn(references, key)) return;
+  const previousPlan = currentPlan;
+  const plan = await api(references[key]);
+  if (request !== selection || previousPlan !== currentPlan) return;
+  setPlan(plan);
+  $("viewer-example").value = key;
+}
+$("viewer-example").addEventListener("change", e => guarded(null, () => selectReference(e.target.value)));
+const initialExample = new URLSearchParams(location.search).get("exemple");
+if (initialExample) guarded(null, () => selectReference(initialExample));

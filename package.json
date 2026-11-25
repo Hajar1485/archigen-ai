@@ -1,0 +1,16 @@
+{
+  "name": "archigen-viewer",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "prepare:viewer": "node scripts/prepare-viewer.mjs",
+    "test": "node --test tests/js/*.test.js"
+  },
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "playwright-core": "1.62.1"
+  }
+}
