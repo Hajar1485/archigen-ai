@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ArchiGen AI</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="viewer/viewer.css">
+<link rel="icon" href="data:,">
+<script type="importmap">
+{"imports":{"three":"./assets/three/three.module.js","three/addons/controls/OrbitControls.js":"./assets/three/OrbitControls.js"}}
+</script>
 </head>
 <body>
 <header>
@@ -24,6 +29,41 @@
 
 <main>
   <section id="tab-design" class="tab">
+    <section id="view3d" class="panel" data-state="empty" aria-labelledby="viewer-title">
+      <div class="viewer-heading">
+        <h2 id="viewer-title">Maquette 3D</h2>
+        <label>Plan de référence
+          <select id="viewer-example">
+            <option value="">Choisir un exemple…</option>
+            <option value="simple">Maison à deux pièces</option>
+            <option value="residential">Maison résidentielle</option>
+            <option value="historical">Maison de référence thermique</option>
+          </select>
+        </label>
+      </div>
+      <div class="viewer-stage">
+        <div class="scene-host"></div>
+        <output class="room-readout" data-room></output>
+        <div class="viewer-message"><span role="status">Chargez un exemple ou validez un plan pour afficher sa maquette.</span>
+          <button type="button" data-retry hidden>Relancer la vue 3D</button>
+        </div>
+      </div>
+      <fieldset class="viewer-controls" disabled><legend>Affichage de la maquette</legend>
+        <div class="viewer-buttons">
+          <button type="button" data-view="iso">Vue oblique</button>
+          <button type="button" data-view="top">Vue de dessus</button>
+          <button type="button" data-view="reset">Recentrer</button>
+        </div>
+        <div class="viewer-layers">
+          <label><input type="checkbox" data-layer="exterior" checked> Façades</label>
+          <label><input type="checkbox" data-layer="interior" checked> Cloisons</label>
+          <label><input type="checkbox" data-layer="floors" checked> Sols</label>
+          <label><input type="checkbox" data-layer="grid" checked> Grille</label>
+          <label><input type="checkbox" data-layer="cut"> Vue en coupe</label>
+        </div>
+      </fieldset>
+      <div class="viewer-footer">Glisser pour tourner · Clic droit pour déplacer · Molette pour zoomer · Cliquer sur un sol pour lire sa surface</div>
+    </section>
     <div class="cols">
       <div class="panel">
         <h2>Source du plan</h2>
@@ -47,7 +87,6 @@
         <h2>Aperçu 2D</h2>
         <div id="plan-view" class="plan-view"><p class="muted">Aucun plan chargé.</p></div>
         <div id="plan-info" class="muted"></div>
-        <div id="view3d" class="view3d" hidden></div>
       </div>
     </div>
   </section>

@@ -16,7 +16,7 @@ Image → segmentation → vectorisation → topologie → calibration métrique
 | | Modules | Dossier | État |
 |---|---|---|---|
 | Personne 1 | NLP + génération de plans 2D (LLM, OR-Tools, Shapely) | `planner/` | à intégrer |
-| Personne 2 | Import de plan (CubiCasa5K) + reconstruction 3D (Three.js) | `plan_import/`, `frontend/` (vue 3D) | à intégrer |
+| Personne 2 | Import de plan (CubiCasa5K) + reconstruction 3D (Three.js) | `plan_import/`, `frontend/viewer/` | Vue 3D implémentée et testée localement. Import à développer. |
 | Personne 3 | Thermique (UCI) + application web + API + intégration | `thermal/`, `api/`, `frontend/`, `common/`, `tests/` | fonctionnel |
 
 ## Structure du dépôt
@@ -33,6 +33,16 @@ tests/             tests d'intégration et du module thermique
 ```
 
 ## Installation et validation
+
+**Revue locale sous Windows.** Double-cliquer sur `start_archigen.bat` ouvre la maison à deux pièces dans le navigateur. Le serveur écoute sur `127.0.0.1:8000`. Le menu **Plan de référence** permet de passer à la maison résidentielle ou à l’exemple thermique.
+
+**Premier démarrage sur une autre machine.** Avec Node.js 24 et pnpm 11.25.0, préparer les ressources avant de lancer FastAPI. Si pnpm manque, la commande `npx --yes pnpm@11.25.0 install --frozen-lockfile` permet l’installation à partir du verrou. Le navigateur charge ensuite Three.js et OrbitControls depuis FastAPI.
+
+```sh
+pnpm install --frozen-lockfile
+node scripts/prepare-viewer.mjs
+node --test tests/js/*.test.js
+```
 
 Utiliser Python 3.12 depuis la racine. Les modèles thermiques sont déjà livrés. L’environnement de développement ajoute le validateur des exports JSON Schema.
 
@@ -59,9 +69,9 @@ python -m uvicorn api.main:app --reload
 
 Ouvrir `http://127.0.0.1:8000/` pour l’interface et `/docs` pour l’API. L’installation applicative seule utilise `requirements.txt`. Pour une expérimentation explicite, `python -m thermal.train` réécrit les artefacts locaux dans `models/`. La suite pytest entraîne dans un répertoire temporaire.
 
-## Contrat V1 proposé
+## Contrat V1 intégré
 
-Les trois membres doivent examiner la V1 avant de démarrer leurs branches de développement. `common/schema.py` définit le plan métrique, `common/requirements_schema.py` le programme avant placement. Le NLP transmet son programme au solveur 2D. L’importeur segmente, vectorise et calibre une image avant de produire le même plan. Les deux parcours alimentent le frontend, la 3D et les calculs thermiques par FastAPI.
+La V1 intégrée dans `main` sert de base à cette phase. `common/schema.py` définit le plan métrique, `common/requirements_schema.py` le programme avant placement. Le futur solveur et le futur importeur d’images calibrées fourniront le même plan au frontend, à la 3D et aux calculs thermiques via FastAPI.
 
 `common/geometry_validation.py` vérifie le plan après lecture Pydantic. `python -m common.export_schemas` écrit les deux exports Draft 2020-12 dans `common/schemas/`. Les trois nouveaux exemples se trouvent dans `data/examples/`. Le bouton de démonstration charge toujours `data/example_plan.json`.
 
@@ -72,7 +82,7 @@ Les trois membres doivent examiner la V1 avant de démarrer leurs branches de d�
 - **Personne 2** : `plan_import/__init__.py` exposant `import_plan(image: bytes, known_dimension_m: float | None) -> dict`.
 - Autres noms : variables `ARCHIGEN_MODULE_PLANNER` / `ARCHIGEN_MODULE_IMPORT`.
 - La sortie est validée contre le schéma : non conforme → erreur 502 claire. Module absent → 503 sans planter l'appli.
-- Vue 3D : le front émet l'événement `plan-changed` (`detail` = plan) et réserve `#view3d`.
+- Vue 3D : le frontend émet `plan-changed`. Le visualiseur reconstruit les maillages dans `#view3d` à partir de `event.detail`.
 - Ajouter ses dépendances dans `requirements.txt`.
 
 ## Endpoints

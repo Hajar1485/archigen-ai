@@ -8,7 +8,7 @@ def import_plan(image: bytes, known_dimension_m: float | None) -> dict:
 ```
 
 Remplacer ce README par `__init__.py`. La sortie est validée par l'API contre `common.schema.Plan`.
-Responsabilités : prétraitement, segmentation CubiCasa5K (murs, portes, fenêtres), extraction géométrique. La vue 3D Three.js s'ajoute dans `frontend/` (écouter l'événement `plan-changed`, conteneur `#view3d`).
+Responsabilités : prétraitement, segmentation CubiCasa5K (murs, portes, fenêtres), extraction géométrique. La vue Three.js dans `frontend/viewer/` consomme déjà le plan courant via `plan-changed` dans `#view3d`.
 
 
 ## Échelle et sortie du module
